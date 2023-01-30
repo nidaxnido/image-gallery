@@ -2,18 +2,29 @@ import Head from 'next/head'
 // import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
-import {Card, CardBody, CardHeader, CardFooter, Text, Image, Stack, Box, Flex, Container, Tag } from '@chakra-ui/react'
-import {useState, useEffect} from 'react'
+import {Card, CardBody, CardHeader, CardFooter, Text, Image, Stack, Box, Flex, Container, Tag, HStack, Button, Input, Center, propNames, Heading } from '@chakra-ui/react'
+import React, {useState, useEffect} from 'react'
 import { imageConfigDefault } from 'next/dist/shared/lib/image-config'
-import {ImageCard} from '@/components/ImageCard'
+import ImageCard from '@/components/ImageCard'
 
 const inter = Inter({ subsets: ['latin'] })
+
+
 
 export default function Home() {
   const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [term, setTerm] = useState('');
   const apiKey = '33214573-526af4a4f768e486bd33d14f0'
+  const jpg = images.map((img)=>{
+    const {id,webformatURL, downloads, views, likes, tags, user} = img;
+    return {id,webformatURL, downloads, views, likes, tags, user}
+  })
+
+  function doSeacrh(e : React.FormEvent){
+    e.preventDefault();
+    setTerm(term);
+  }
 
   useEffect(()=>{
     fetch(`https://pixabay.com/api/?key=${apiKey}&q=${term}&image_type=photo&pretty=true`)
@@ -22,9 +33,12 @@ export default function Home() {
       setImages(data.hits)
       setIsLoading(false)
     })
-  }, [])
-  if(isLoading) return <p>Loading...</p>
-  if(!images) return <p>No Image Available</p>
+  }, [term])
+  // if(isLoading) return <p>Loading...</p>
+  // if(!isLoading && images.length === 0) return <Center ><h1>No Images Found</h1></Center>
+
+  
+  // console.log(jpg)
   return (
     <>
       <Head>
@@ -34,11 +48,18 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
+        <form onSubmit={doSeacrh}>
+          <Flex justify='center' align='center' p='20px' pb='10px'>
+            <Input variant='flushed' maxW='300px' placeholder='Search Image' value={term} onChange={e=>setTerm(e.target.value)} />
+            <Button colorScheme='blue' type='submit'>Search</Button>
+          </Flex>
+        </form>
         <Flex p='16px' pb='30px' wrap='wrap' justify='space-between'>
           {
-            images.map((img)=>{
-             return <ImageCard key={img.id} img={img} />
-            })
+            (!isLoading && jpg.length == 0)?
+            <Center w='100%' h='200px'><Heading as='h2'>No Images Found</Heading></Center>
+            : <ImageCard gambar={jpg} />
+          
           }
           
         </Flex>
