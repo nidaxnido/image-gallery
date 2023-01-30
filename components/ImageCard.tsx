@@ -13,7 +13,7 @@ function ImageCard({gambar}:{gambar:gbr[]}){
     {
       
       gambar.map((img)=>{
-       return <Box boxShadow='lg' borderRadius='xl' maxW='33%' p='16px' key={img.id}>
+       return <Box boxShadow='lg' borderRadius='xl' maxW={['100%','50%', '33%']} p='16px' key={img.id}>
        <Image src={img.webformatURL} alt="sample photo" borderRadius='xl' />
        <Container>
          <Text fontWeight='bold' color='purple.500' fontSize='xl' mb={2} >Photo by {img.user}</Text>
